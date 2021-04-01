@@ -4,15 +4,13 @@ namespace AMMCrawler.Entities
 {
     public class ResourceCrawlMapping
     {
-        public int ID { get; set; }
-
-        [ForeignKey(nameof(CrawledLinks))]
+        [ForeignKey(nameof(CrawledLink))]
         public int CrawledLinkID { get; set; }
 
-        [ForeignKey(nameof(FoundLinks))]
+        [ForeignKey(nameof(FoundLink))]
         public int FoundLinkID { get; set; }
 
-        public virtual ResourceLink CrawledLinks { get; set; }
-        public virtual ResourceLink FoundLinks { get; set; }
+        public virtual ResourceLink CrawledLink { get; set; }
+        public virtual ResourceLink FoundLink { get; set; }
     }
 }

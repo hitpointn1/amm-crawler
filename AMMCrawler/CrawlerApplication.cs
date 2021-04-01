@@ -1,4 +1,5 @@
 ﻿using AMMCrawler.Abstractions;
+using AMMCrawler.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,26 +11,35 @@ namespace AMMCrawler
 {
     internal class CrawlerApplication : IConsoleApplication
     {
-        public CrawlerApplication()
+        static CrawlerApplication()
         {
             Configuration = GetConfiguration();
         }
 
-        public IConfiguration Configuration { get; }
+        public static IConfiguration Configuration { get; }
 
         public async Task Run()
         {
-            var host = Host.CreateDefaultBuilder()
+            IHost host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddSingleton<ICrawler, AMMCrawler>();
+                    services.AddTransient<ICrawler, AMMCrawler>();
                     services.AddDbContext<CrawlerContext>(o => o.UseSqlite(Configuration.GetConnectionString(nameof(CrawlerContext))), ServiceLifetime.Transient);
                 })
                 .Build();
 
             var crawler = host.Services.GetRequiredService<ICrawler>();
 
-            await crawler.Crawl();
+
+            await crawler.Crawl(Configuration.GetValue<string>("InitialLink"));
+            ResourceLink resLink = null;
+            {
+                var currentCrawler = host.Services.GetRequiredService<ICrawler>();
+                resLink = await currentCrawler.GetAvailableLink();
+                if (resLink is not null)
+                    await currentCrawler.Crawl(resLink.URL);
+            }
+            while (resLink is not null);
         }
 
         internal static IConfiguration GetConfiguration()
