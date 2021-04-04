@@ -1,10 +1,13 @@
 ﻿using AMMCrawler.Abstractions;
 using AMMCrawler.Entities;
 using AMMCrawler.Enums;
+using AMMCrawler.Providers;
 using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AMMCrawler.Helpers;
+using System.Linq;
 
 namespace AMMCrawler
 {
@@ -26,23 +29,35 @@ namespace AMMCrawler
             _driver.Navigate().GoToUrl(url);
             await Task.Delay(JSWait);
 
-            string clearUrl = _driver.GetJSResult<string>("return location.origin + location.pathname;");
+            string clearUrl = _driver.GetJSResult<string>("return location.origin;");
 
-            string etcLinksQuery = "'a[href^=\"#\"], a[href^=\"/\"][onclick^=\"return false\"]'";
-            string outerLinksQuery = "'a[href^=\"http\"]:not([href*=\"" + clearUrl + "\"])'";
-            string innerLinksQuery = "'a[href=\"" + clearUrl + "\"], a[href^=\"/\"]:not([href$=\".*\"]):not([onclick^=\"return false\"])'";
+            string etcLinksQuery = new LinkSelectorBuilder()
+                .IsEtc()
+                .Build();
 
-            Task<HashSet<string>> etcLinksTask = _providerFactory.ETCLinksProvider.GetLinksFromPage(_driver, etcLinksQuery);
-            Task<HashSet<string>> outerLinksTask = _providerFactory.LinksProvider.GetLinksFromPage(_driver, outerLinksQuery);
-            Task<HashSet<string>> innerLinksTask = _providerFactory.LinksProvider.GetLinksFromPage(_driver, innerLinksQuery);
+            string outerLinksQuery = new LinkSelectorBuilder()
+                .HrefStartsWith("http")
+                .NotHrefStartsWith(clearUrl)
+                .Build();
+
+            string innerLinksQuery = new LinkSelectorBuilder()
+                .HrefStartsWith(clearUrl)
+                .NotEtc()
+                .OrHrefStartsWith("/")
+                .NotEtc()
+                .Build();
+
+            Task<HashSet<LinkData>> etcLinksTask = _providerFactory.ETCLinksProvider.GetLinksFromPage(_driver, etcLinksQuery);
+            Task<HashSet<LinkData>> outerLinksTask = _providerFactory.LinksProvider.GetLinksFromPage(_driver, outerLinksQuery);
+            Task<HashSet<LinkData>> innerLinksTask = _providerFactory.LinksProvider.GetLinksFromPage(_driver, innerLinksQuery);
 
             await Task.WhenAll(etcLinksTask, outerLinksTask, innerLinksTask);
 
-            HashSet<string> etcLinks = etcLinksTask.GetAwaiter().GetResult();
-            HashSet<string> outerLinks = outerLinksTask.GetAwaiter().GetResult();
-            HashSet<string> innerLinks = innerLinksTask.GetAwaiter().GetResult();
+            HashSet<LinkData> etcLinks = etcLinksTask.GetAwaiter().GetResult();
+            HashSet<LinkData> outerLinks = outerLinksTask.GetAwaiter().GetResult();
+            HashSet<LinkData> innerLinks = innerLinksTask.GetAwaiter().GetResult();
         }
-        
+
         public Task<ResourceLink> GetAvailableLink()
         {
             return _context.ResourceLinks.FirstOrDefaultAsync(r => !r.IsCrawled && r.Type != LinkType.Etc);

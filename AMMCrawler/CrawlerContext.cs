@@ -13,6 +13,7 @@ namespace AMMCrawler
 
         public DbSet<ResourceLink> ResourceLinks { get; set; }
         public DbSet<ResourceCrawlMapping> ResourceMappings { get; set; }
+        public DbSet<ETCLinkMetadata> ETCLinksMetadata { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

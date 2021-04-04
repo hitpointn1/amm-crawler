@@ -1,4 +1,5 @@
 ﻿using AMMCrawler.Abstractions;
+using AMMCrawler.Helpers;
 using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace AMMCrawler.Providers
 {
     internal class LinksProvider : ILinksProvider
     {
-        public Task<HashSet<string>> GetLinksFromPage(IWebDriver driver, string selector)
+        public Task<HashSet<LinkData>> GetLinksFromPage(IWebDriver driver, string selector)
         {
             return Task.Run(() =>
             {
@@ -18,28 +19,32 @@ namespace AMMCrawler.Providers
                 .ContinueWith(ParseResult);
         }
 
-        private HashSet<string> ParseResult(Task<IReadOnlyCollection<IWebElement>> elementsTask)
+        private HashSet<LinkData> ParseResult(Task<IReadOnlyCollection<IWebElement>> elementsTask)
         {
             IReadOnlyCollection<IWebElement> elements = elementsTask.GetAwaiter().GetResult();
-
             return elements.Select(GetLink)
-                .Where(l => !string.IsNullOrEmpty(l))
+                .Where(l => l != null)
                 .ToHashSet();
         }
 
-        private string GetLink(IWebElement element)
+        private LinkData GetLink(IWebElement element)
         {
             string href = element.GetAttribute("href");
+            string onclick = element.GetAttribute("onclick");
 
             if (!IsLinkValid(href))
                 return null;
 
-            return ParseLink(href);
+            return new LinkData()
+            {
+                Href = ParseLink(href),
+                OnClick = onclick
+            };
         }
 
         protected virtual bool IsLinkValid(string href)
         {
-            return !string.IsNullOrEmpty(href) && !href.StartsWith("mailto:");
+            return !string.IsNullOrEmpty(href);
         }
 
         protected virtual string ParseLink(string href)
