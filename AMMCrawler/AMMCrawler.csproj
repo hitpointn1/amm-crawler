@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AMMCrawler.DAL\AMMCrawler.DAL.csproj" />
+    <ProjectReference Include="..\AMMCrawler.ServiceLayer\AMMCrawler.ServiceLayer.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 
 namespace AMMCrawler.Providers
 {
-    internal class ETCLinksProvider : LinksProvider
+    public class ETCLinksProvider : LinksProvider
     {
         protected override string ParseLink(string href)
         {

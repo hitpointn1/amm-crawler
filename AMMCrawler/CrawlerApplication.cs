@@ -1,13 +1,16 @@
 ﻿using AMMCrawler.Abstractions;
+using AMMCrawler.Configuration;
 using AMMCrawler.Core;
-using AMMCrawler.DAL;
-using AMMCrawler.DAL.Entities;
+using AMMCrawler.Core.Abstractions;
+using AMMCrawler.Crawlers;
 using AMMCrawler.Providers;
-using Microsoft.EntityFrameworkCore;
+using AMMCrawler.ServiceLayer.Abstractions;
+using AMMCrawler.ServiceLayer.DTO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using System;
 using System.Threading.Tasks;
 
 namespace AMMCrawler
@@ -25,24 +28,54 @@ namespace AMMCrawler
 
                     services.AddSingleton<LinksProvider>();
                     services.AddSingleton<ETCLinksProvider>();
-                    services.AddSingleton<ILinksProviderFactory, LinksProviderFactory>();
+                    services.AddSingleton<ILogger, ConsoleLogger>();
 
-                    services.AddDbContext<CrawlerContext>(o => o.UseSqlite(CrawlConfiguration.CrawlerContext), ServiceLifetime.Transient);
+                    services.AddSingleton<InnerLinksDispatcher>();
+                    services.AddSingleton<ETCLinksDispatcher>();
+                    services.AddSingleton<OuterLinksDispatcher>();
+                    services.AddSingleton<ICrawlDispatchersFactory, CrawlDispatchersFactory>();
+
+                    services.ConfigureServices();
                 })
                 .Build();
 
-            using (ICrawler crawler = host.Services.GetRequiredService<ICrawler>())
-                await crawler.Crawl(CrawlConfiguration.InitialLink);
-            ResourceLink resLink = null;
-            do
-            {
-                using ICrawler currentCrawler = host.Services.GetRequiredService<ICrawler>();
-                resLink = await currentCrawler.GetAvailableLink();
-                if (resLink is not null)
-                    await currentCrawler.Crawl(resLink.URL);
+            string applicationName = CrawlConfiguration.Application;
+            string applicationUrl = CrawlConfiguration.InitialLink;
+            ApplicationRunDto runInfo = await host.Services
+                .GetRequiredService<IApplicationService>()
+                .StartCrawl(applicationName, applicationUrl);
 
+            try
+            {
+                ResourceLinkDto resLink = new ResourceLinkDto()
+                {
+                    ApplicationID = runInfo.ApplicationID,
+                    URL = applicationUrl
+                };
+
+                using (ICrawler crawler = host.Services.GetRequiredService<ICrawler>())
+                    await crawler.Crawl(resLink);
+                do
+                {
+                    using ICrawler currentCrawler = host.Services.GetRequiredService<ICrawler>();
+                    resLink = await currentCrawler.GetAvailableLink();
+                    if (resLink is not null)
+                        await currentCrawler.Crawl(resLink);
+
+                }
+                while (resLink is not null);
             }
-            while (resLink is not null);
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                host.Services.GetRequiredService<ILogger>().LogError("Error in crawl", ex);
+            }
+            finally
+            {
+                await host.Services
+                    .GetRequiredService<IApplicationService>()
+                    .EndCrawl(runInfo.RunID);
+            }         
         }
     }
 }

@@ -9,10 +9,12 @@ namespace AMMCrawler.Core
         static CrawlConfiguration()
         {
             IConfiguration configuration = GetConfiguration();
+            Application = configuration.GetValue<string>(nameof(Application));
             InitialLink = configuration.GetValue<string>(nameof(InitialLink));
             CrawlerContext = configuration.GetConnectionString(nameof(CrawlerContext));
         }
 
+        public static string Application { get; }
         public static string InitialLink { get; }
         public static string CrawlerContext { get; }
 

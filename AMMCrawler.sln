@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMMCrawler", "AMMCrawler\AM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMMCrawler.Tests", "AMMCrawler.Tests\AMMCrawler.Tests.csproj", "{E7A0E96F-6394-49D8-A56B-4B71E7A4D0F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMMCrawler.DAL", "AMMCrawler.DAL\AMMCrawler.DAL.csproj", "{1CDE365E-13BA-4CEB-BDB1-0F4D34FCF95F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMMCrawler.DAL", "AMMCrawler.DAL\AMMCrawler.DAL.csproj", "{1CDE365E-13BA-4CEB-BDB1-0F4D34FCF95F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMMCrawler.Core", "AMMCrawler.Core\AMMCrawler.Core.csproj", "{0C25FBA2-E95B-44B7-BA7B-8043F2BC1242}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMMCrawler.Core", "AMMCrawler.Core\AMMCrawler.Core.csproj", "{0C25FBA2-E95B-44B7-BA7B-8043F2BC1242}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMMCrawler.ServiceLayer", "AMMCrawler.ServiceLayer\AMMCrawler.ServiceLayer.csproj", "{2C8832F2-4A38-4E5E-AEF2-5B2130C0FA13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{0C25FBA2-E95B-44B7-BA7B-8043F2BC1242}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C25FBA2-E95B-44B7-BA7B-8043F2BC1242}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C25FBA2-E95B-44B7-BA7B-8043F2BC1242}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C8832F2-4A38-4E5E-AEF2-5B2130C0FA13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C8832F2-4A38-4E5E-AEF2-5B2130C0FA13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C8832F2-4A38-4E5E-AEF2-5B2130C0FA13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C8832F2-4A38-4E5E-AEF2-5B2130C0FA13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

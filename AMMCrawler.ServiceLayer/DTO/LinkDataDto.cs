@@ -1,13 +1,13 @@
-﻿namespace AMMCrawler.Providers
+﻿namespace AMMCrawler.DTO
 {
-    public class LinkData
+    public class LinkDataDto
     {
         public string Href { get; set; }
         public string OnClick { get; set; }
 
         public override bool Equals(object obj)
         {
-            return obj is LinkData data &&
+            return obj is LinkDataDto data &&
                    Href == data.Href;
         }
 

@@ -1,4 +1,5 @@
 ﻿using AMMCrawler.Abstractions;
+using AMMCrawler.DTO;
 using AMMCrawler.Extensions;
 using OpenQA.Selenium;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace AMMCrawler.Providers
 {
-    internal class LinksProvider : ILinksProvider
+    public class LinksProvider : ILinksProvider
     {
-        public Task<HashSet<LinkData>> GetLinksFromPage(IWebDriver driver, string selector)
+        public Task<HashSet<LinkDataDto>> GetLinksFromPage(IWebDriver driver, string selector)
         {
             return Task.Run(() =>
             {
@@ -19,7 +20,7 @@ namespace AMMCrawler.Providers
                 .ContinueWith(ParseResult);
         }
 
-        private HashSet<LinkData> ParseResult(Task<IReadOnlyCollection<IWebElement>> elementsTask)
+        private HashSet<LinkDataDto> ParseResult(Task<IReadOnlyCollection<IWebElement>> elementsTask)
         {
             IReadOnlyCollection<IWebElement> elements = elementsTask.GetAwaiter().GetResult();
             return elements.Select(GetLink)
@@ -27,7 +28,7 @@ namespace AMMCrawler.Providers
                 .ToHashSet();
         }
 
-        private LinkData GetLink(IWebElement element)
+        private LinkDataDto GetLink(IWebElement element)
         {
             string href = element.GetAttribute("href");
             string onclick = element.GetAttribute("onclick");
@@ -35,7 +36,7 @@ namespace AMMCrawler.Providers
             if (!IsLinkValid(href))
                 return null;
 
-            return new LinkData()
+            return new LinkDataDto()
             {
                 Href = ParseLink(href),
                 OnClick = onclick
