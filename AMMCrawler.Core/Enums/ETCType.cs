@@ -1,4 +1,4 @@
-﻿namespace AMMCrawler.Enums
+﻿namespace AMMCrawler.Core.Enums
 {
     public enum ETCType : byte
     {

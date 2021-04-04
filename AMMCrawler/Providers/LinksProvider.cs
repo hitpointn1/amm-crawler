@@ -1,5 +1,5 @@
 ﻿using AMMCrawler.Abstractions;
-using AMMCrawler.Helpers;
+using AMMCrawler.Extensions;
 using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Linq;

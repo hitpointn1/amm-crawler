@@ -1,8 +1,9 @@
-﻿using AMMCrawler.Enums;
+﻿using AMMCrawler.Core.Enums;
+using AMMCrawler.Core.Extensions;
 using System;
 using System.Text;
 
-namespace AMMCrawler.Helpers
+namespace AMMCrawler.Core.Helpers
 {
     public class LinkSelectorBuilder
     {

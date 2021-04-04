@@ -1,23 +1,29 @@
-﻿using AMMCrawler.Entities;
+﻿using AMMCrawler.Core;
+using AMMCrawler.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System.Diagnostics.CodeAnalysis;
 
-namespace AMMCrawler
+namespace AMMCrawler.DAL
 {
     public class CrawlerContext : DbContext
     {
+        public CrawlerContext()
+        {
+        }
+
         public CrawlerContext([NotNullAttribute] DbContextOptions options) : base(options)
         {
         }
 
+        public DbSet<Application> Applications { get; set; }
+        public DbSet<CrawlRunInfo> RunInfo { get; set; }
         public DbSet<ResourceLink> ResourceLinks { get; set; }
         public DbSet<ResourceCrawlMapping> ResourceMappings { get; set; }
         public DbSet<ETCLinkMetadata> ETCLinksMetadata { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(CrawlerApplication.Configuration.GetConnectionString(nameof(CrawlerContext)));
+            optionsBuilder.UseSqlite(CrawlConfiguration.CrawlerContext);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

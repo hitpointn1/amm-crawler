@@ -1,4 +1,5 @@
-﻿using AMMCrawler.Helpers;
+﻿using AMMCrawler.Core.Extensions;
+using AMMCrawler.Core.Helpers;
 using NUnit.Framework;
 
 namespace AMMCrawler.Tests

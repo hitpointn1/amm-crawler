@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace AMMCrawler.Migrations
+namespace AMMCrawler.DAL.Migrations
 {
     public partial class Inital : Migration
     {

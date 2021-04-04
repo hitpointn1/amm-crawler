@@ -1,4 +1,4 @@
-﻿using AMMCrawler.Entities;
+﻿using AMMCrawler.DAL.Entities;
 using System;
 using System.Threading.Tasks;
 

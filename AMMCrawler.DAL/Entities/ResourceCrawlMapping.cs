@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AMMCrawler.Entities
+namespace AMMCrawler.DAL.Entities
 {
     public class ResourceCrawlMapping
     {

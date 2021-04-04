@@ -1,25 +1,19 @@
 ﻿using AMMCrawler.Abstractions;
-using AMMCrawler.Entities;
+using AMMCrawler.Core;
+using AMMCrawler.DAL;
+using AMMCrawler.DAL.Entities;
 using AMMCrawler.Providers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace AMMCrawler
 {
     internal class CrawlerApplication : IConsoleApplication
     {
-        static CrawlerApplication()
-        {
-            Configuration = GetConfiguration();
-        }
-
-        public static IConfiguration Configuration { get; }
 
         public async Task Run()
         {
@@ -33,12 +27,12 @@ namespace AMMCrawler
                     services.AddSingleton<ETCLinksProvider>();
                     services.AddSingleton<ILinksProviderFactory, LinksProviderFactory>();
 
-                    services.AddDbContext<CrawlerContext>(o => o.UseSqlite(Configuration.GetConnectionString(nameof(CrawlerContext))), ServiceLifetime.Transient);
+                    services.AddDbContext<CrawlerContext>(o => o.UseSqlite(CrawlConfiguration.CrawlerContext), ServiceLifetime.Transient);
                 })
                 .Build();
 
             using (ICrawler crawler = host.Services.GetRequiredService<ICrawler>())
-                await crawler.Crawl(Configuration.GetValue<string>("InitialLink"));
+                await crawler.Crawl(CrawlConfiguration.InitialLink);
             ResourceLink resLink = null;
             do
             {
@@ -49,14 +43,6 @@ namespace AMMCrawler
 
             }
             while (resLink is not null);
-        }
-
-        internal static IConfiguration GetConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder();
-            return configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
         }
     }
 }

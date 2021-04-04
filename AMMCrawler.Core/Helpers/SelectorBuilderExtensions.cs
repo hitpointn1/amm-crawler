@@ -1,4 +1,6 @@
-﻿namespace AMMCrawler.Helpers
+﻿using AMMCrawler.Core.Helpers;
+
+namespace AMMCrawler.Core.Extensions
 {
     public static class SelectorBuilderExtensions
     {

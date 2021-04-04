@@ -1,6 +1,6 @@
-﻿using AMMCrawler.Enums;
+﻿using AMMCrawler.Core.Enums;
 
-namespace AMMCrawler.Helpers
+namespace AMMCrawler.Core.Extensions
 {
     public static class EnumExtensions
     {

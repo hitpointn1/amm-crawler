@@ -1,13 +1,16 @@
 ﻿using AMMCrawler.Abstractions;
-using AMMCrawler.Entities;
-using AMMCrawler.Enums;
 using AMMCrawler.Providers;
+using AMMCrawler.Core.Enums;
+using AMMCrawler.DAL;
+using AMMCrawler.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AMMCrawler.Helpers;
 using System.Linq;
+using AMMCrawler.Core.Helpers;
+using AMMCrawler.Extensions;
+using AMMCrawler.Core.Extensions;
 
 namespace AMMCrawler
 {

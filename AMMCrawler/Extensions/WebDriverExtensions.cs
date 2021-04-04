@@ -2,7 +2,7 @@
 using OpenQA.Selenium.Support.UI;
 using System;
 
-namespace AMMCrawler.Helpers
+namespace AMMCrawler.Extensions
 {
     public static class WebDriverExtensions
     {
