@@ -14,7 +14,7 @@ namespace AMMCrawler
         private readonly ILinksService _linksService;
         private readonly ILogger _logger;
         private readonly ICrawlDispatchersFactory _crawlFactory;
-        private const int JSWait = 500;
+
         public AMMCrawler(ILinksService linksService, IWebDriver driver, ILogger logger, ICrawlDispatchersFactory factory)
         {
             _driver = driver;
@@ -26,20 +26,20 @@ namespace AMMCrawler
         public async Task Crawl(ResourceLinkDto dto)
         {
             _driver.Navigate().GoToUrl(dto.URL);
-            await _linksService.SaveCrawledLinkIfMissing(dto);
-
+            Task saveTask = _linksService.SaveCrawledLinkIfMissing(dto);
             string startMessage = string.Format("Crawl for {0} is started", dto.URL);
             _logger.LogInfo(startMessage);
 
             string clearUrl = ETCLinksAnalyzer.Instance.GetOrigin(dto.URL);
 
+            await saveTask;
             Task<int> innerLinksTask = _crawlFactory.InnerLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
             Task<int> etcLinksTask = _crawlFactory.ETCLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
             Task<int> outerLinksTask = _crawlFactory.OuterLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
 
             await Task.WhenAll(etcLinksTask, outerLinksTask, innerLinksTask);
 
-            int savedInnerLinksCount = etcLinksTask.GetAwaiter().GetResult();
+            int savedInnerLinksCount = innerLinksTask.GetAwaiter().GetResult();
             int savedEtcLinksCount = etcLinksTask.GetAwaiter().GetResult();
             int savedOuterLinksCount = outerLinksTask.GetAwaiter().GetResult();
 

@@ -2,6 +2,7 @@
 using AMMCrawler.Extensions;
 using AMMCrawler.ServiceLayer.DTO;
 using OpenQA.Selenium;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace AMMCrawler.Providers
 {
     public class LinksProvider : ILinksProvider
     {
+        private const int MAX_RETRY_COUNT = 3;
         public Task<HashSet<LinkDataDto>> GetLinksFromPage(IWebDriver driver, string selector)
         {
             return Task.Run(() =>
@@ -23,24 +25,37 @@ namespace AMMCrawler.Providers
         private HashSet<LinkDataDto> ParseResult(Task<IReadOnlyCollection<IWebElement>> elementsTask)
         {
             IReadOnlyCollection<IWebElement> elements = elementsTask.GetAwaiter().GetResult();
+            if (elements == null)
+                return new HashSet<LinkDataDto>(0);
             return elements.Select(GetLink)
                 .Where(l => l != null)
                 .ToHashSet();
         }
 
-        private LinkDataDto GetLink(IWebElement element)
+        private LinkDataDto GetLink(IWebElement element, int retryNumber = 0)
         {
-            string href = element.GetAttribute("href");
-            string onclick = element.GetAttribute("onclick");
-
-            if (!IsLinkValid(href))
-                return null;
-
-            return new LinkDataDto()
+            try
             {
-                Href = ParseLink(href),
-                OnClick = onclick
-            };
+                string href = element.GetAttribute("href");
+                string onclick = element.GetAttribute("onclick");
+
+                if (!IsLinkValid(href))
+                    return null;
+
+                return new LinkDataDto()
+                {
+                    Href = ParseLink(href),
+                    OnClick = onclick
+                };
+            }
+            catch
+            {
+                if (retryNumber == MAX_RETRY_COUNT)
+                    return null;
+                Task.Delay(1000).GetAwaiter().GetResult();
+                return GetLink(element, retryNumber + 1);
+            }
+           
         }
 
         protected virtual bool IsLinkValid(string href)

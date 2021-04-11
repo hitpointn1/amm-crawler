@@ -38,6 +38,7 @@ namespace AMMCrawler.ServiceLayer
                 URL = crawledLinkDto.URL
             };
             await _context.AddAsync(crawledLink);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<ResourceLinkDto> GetAvailableLink()
@@ -45,6 +46,8 @@ namespace AMMCrawler.ServiceLayer
             ResourceLink linkData = await _context.ResourceLinks
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => !r.IsCrawled && r.Type == LinkType.Inner);
+            if (linkData is null)
+                return null;
             return new ResourceLinkDto()
             {
                 ApplicationID = linkData.ApplicationID,
@@ -55,13 +58,14 @@ namespace AMMCrawler.ServiceLayer
         public async Task SetResourceLinkAsCrawled(ResourceLinkDto dto)
         {
             ResourceLink[] links = await _context.ResourceLinks
-               .AsNoTracking()
                .Where(r => !r.IsCrawled
                     && r.Type == LinkType.Inner
                     && r.ApplicationID == dto.ApplicationID)
                .ToArrayAsync();
 
-            _logger.LogInfo("Link to crawl left count - " + (links.Length - 1));
+            _logger.LogInfo("Link to crawl left count - " + links.Length);
+            if (links.Length == 0)
+                return;
 
             ResourceLink linkData = links.FirstOrDefault(r => !r.IsCrawled
                     && r.Type == LinkType.Inner
@@ -98,6 +102,7 @@ namespace AMMCrawler.ServiceLayer
                 })
                 .Select(etc => etc.GetETCLinkMetadata(crawledLink));
             await _context.AddRangeAsync(etcLinksMetadata);
+            await _context.SaveChangesAsync();
             return links.Count();
         }
 
@@ -109,19 +114,20 @@ namespace AMMCrawler.ServiceLayer
         private async Task<IEnumerable<ResourceLink>> SaveLinks(ResourceLinkDto crawledLinkDto, HashSet<LinkDataDto> linksDtos, LinkType type)
         {
             Task<ResourceLink> crawledLinkTask = _context.ResourceLinks
+                .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.URL == crawledLinkDto.URL && r.Type == LinkType.Inner);
 
             IEnumerable<string> links = linksDtos
                 .Select(s => s.Href);
 
             Task<ResourceLink[]> existedLinksTask = _context.ResourceLinks
+                .AsNoTracking()
                 .Where(r => links.Contains(r.URL) && r.Type == type)
                 .ToArrayAsync();
 
             ResourceLink crawledLink = await crawledLinkTask;
             ResourceLink[] existedLinks = await existedLinksTask;
-
-            IEnumerable<ResourceLink> notAddedLinks = links
+            ResourceLink[] notAddedLinks = links
                 .Except(existedLinks.Select(r => r.URL))
                 .Where(u => u != crawledLink.URL)
                 .Select(r => new ResourceLink()
@@ -130,9 +136,12 @@ namespace AMMCrawler.ServiceLayer
                     IsCrawled = false,
                     Type = type,
                     URL = r
-                });
+                })
+                .ToArray();
             await _context.AddRangeAsync(notAddedLinks);
-
+            await _context.SaveChangesAsync();
+            if (type != LinkType.Inner)
+                return notAddedLinks;
             IEnumerable<ResourceCrawlMapping> resourceCrawls = existedLinks
                 .Concat(notAddedLinks)
                 .Select(l => new ResourceCrawlMapping()
@@ -141,7 +150,18 @@ namespace AMMCrawler.ServiceLayer
                     FoundLinkID = l.ID
                 });
 
-            await _context.AddRangeAsync(resourceCrawls);
+            IEnumerable<int> crawledLinkIds = resourceCrawls.Select(r => r.CrawledLinkID).Distinct();
+            IEnumerable<int> foundLinkIds = resourceCrawls.Select(r => r.FoundLinkID);
+
+            ResourceCrawlMapping[] existedMappings = await _context.ResourceMappings
+                .Where(r => crawledLinkIds.Contains(r.CrawledLinkID))
+                .Where(r => foundLinkIds.Contains(r.FoundLinkID))
+                .ToArrayAsync();
+
+            IEnumerable<ResourceCrawlMapping> mappingsToAdd = resourceCrawls
+                .Where(r => !resourceCrawls.Any(c => c.CrawledLinkID == r.CrawledLinkID && c.FoundLinkID == r.FoundLinkID));
+            await _context.AddRangeAsync(mappingsToAdd);
+            await _context.SaveChangesAsync();
             return notAddedLinks;
         }
     }

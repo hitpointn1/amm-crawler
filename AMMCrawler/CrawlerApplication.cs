@@ -23,8 +23,9 @@ namespace AMMCrawler
             IHost host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
+                    services.AddTransient<ChromeDriverProvider>();
                     services.AddTransient<ICrawler, AMMCrawler>();
-                    services.AddTransient<IWebDriver, ChromeDriver>();
+                    services.AddTransient<IWebDriver, ChromeDriver>(s => s.GetRequiredService<ChromeDriverProvider>().GetChromeDriver());
 
                     services.AddSingleton<LinksProvider>();
                     services.AddSingleton<ETCLinksProvider>();
@@ -47,14 +48,16 @@ namespace AMMCrawler
 
             try
             {
-                ResourceLinkDto resLink = new ResourceLinkDto()
-                {
-                    ApplicationID = runInfo.ApplicationID,
-                    URL = applicationUrl
-                };
+                using ICrawler crawler = host.Services.GetRequiredService<ICrawler>();
+                ResourceLinkDto resLink = await crawler.GetAvailableLink();
+                if (resLink is null)
+                    resLink = new ResourceLinkDto()
+                    {
+                        ApplicationID = runInfo.ApplicationID,
+                        URL = applicationUrl
+                    };
 
-                using (ICrawler crawler = host.Services.GetRequiredService<ICrawler>())
-                    await crawler.Crawl(resLink);
+                await crawler.Crawl(resLink);
                 do
                 {
                     using ICrawler currentCrawler = host.Services.GetRequiredService<ICrawler>();

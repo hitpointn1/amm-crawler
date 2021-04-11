@@ -22,7 +22,7 @@ namespace AMMCrawler.Crawlers
 
         protected override Task<int> PerformSave(ResourceLinkDto linkDto, HashSet<LinkDataDto> links)
         {
-            return _linksService.SaveOuterLinks(linkDto, links);
+            return _linksService.SaveEtcLinks(linkDto, links);
         }
     }
 }
