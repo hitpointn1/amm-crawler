@@ -41,11 +41,11 @@ namespace AMMCrawler.ServiceLayer
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ResourceLinkDto> GetAvailableLink()
+        public async Task<ResourceLinkDto> GetAvailableLink(int applicationID)
         {
             ResourceLink linkData = await _context.ResourceLinks
                 .AsNoTracking()
-                .FirstOrDefaultAsync(r => !r.IsCrawled && r.Type == LinkType.Inner);
+                .FirstOrDefaultAsync(r => !r.IsCrawled && r.Type == LinkType.Inner && r.ApplicationID == applicationID);
             if (linkData is null)
                 return null;
             return new ResourceLinkDto()

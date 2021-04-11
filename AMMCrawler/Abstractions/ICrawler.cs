@@ -7,6 +7,6 @@ namespace AMMCrawler.Abstractions
     internal interface ICrawler : IDisposable
     {
         Task Crawl(ResourceLinkDto resourceLinkDto);
-        Task<ResourceLinkDto> GetAvailableLink();
+        Task<ResourceLinkDto> GetAvailableLink(int applicationID);
     }
 }

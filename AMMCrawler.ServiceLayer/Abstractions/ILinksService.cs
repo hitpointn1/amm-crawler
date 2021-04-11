@@ -6,7 +6,7 @@ namespace AMMCrawler.ServiceLayer.Abstractions
 {
     public interface ILinksService
     {
-        Task<ResourceLinkDto> GetAvailableLink();
+        Task<ResourceLinkDto> GetAvailableLink(int applicationID);
         Task SaveCrawledLinkIfMissing(ResourceLinkDto crawledLinkDto);
         Task<int> SaveInnerLinks(ResourceLinkDto crawledLink, HashSet<LinkDataDto> innerLinks);
         Task<int> SaveOuterLinks(ResourceLinkDto crawledLink, HashSet<LinkDataDto> outerLinks);

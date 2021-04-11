@@ -49,7 +49,7 @@ namespace AMMCrawler
             try
             {
                 using ICrawler crawler = host.Services.GetRequiredService<ICrawler>();
-                ResourceLinkDto resLink = await crawler.GetAvailableLink();
+                ResourceLinkDto resLink = await crawler.GetAvailableLink(runInfo.ApplicationID);
                 if (resLink is null)
                     resLink = new ResourceLinkDto()
                     {
@@ -61,7 +61,7 @@ namespace AMMCrawler
                 do
                 {
                     using ICrawler currentCrawler = host.Services.GetRequiredService<ICrawler>();
-                    resLink = await currentCrawler.GetAvailableLink();
+                    resLink = await currentCrawler.GetAvailableLink(runInfo.ApplicationID);
                     if (resLink is not null)
                         await currentCrawler.Crawl(resLink);
 

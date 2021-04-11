@@ -50,9 +50,9 @@ namespace AMMCrawler
             _logger.LogInfo(endMessage);
         }
 
-        public Task<ResourceLinkDto> GetAvailableLink()
+        public Task<ResourceLinkDto> GetAvailableLink(int applicationID)
         {
-            return _linksService.GetAvailableLink();
+            return _linksService.GetAvailableLink(applicationID);
         }
 
         public void Dispose()
