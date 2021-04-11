@@ -1,6 +1,5 @@
 ﻿using AMMCrawler.Abstractions;
 using AMMCrawler.Core.Helpers;
-using AMMCrawler.DTO;
 using AMMCrawler.ServiceLayer.Abstractions;
 using AMMCrawler.ServiceLayer.DTO;
 using OpenQA.Selenium;

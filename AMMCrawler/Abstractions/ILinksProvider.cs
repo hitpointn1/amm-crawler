@@ -1,4 +1,4 @@
-﻿using AMMCrawler.DTO;
+﻿using AMMCrawler.ServiceLayer.DTO;
 using OpenQA.Selenium;
 using System.Collections.Generic;
 using System.Threading.Tasks;

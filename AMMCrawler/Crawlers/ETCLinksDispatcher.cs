@@ -1,5 +1,4 @@
-﻿using AMMCrawler.DTO;
-using AMMCrawler.ServiceLayer.Abstractions;
+﻿using AMMCrawler.ServiceLayer.Abstractions;
 using AMMCrawler.ServiceLayer.DTO;
 using AMMCrawler.Core.Extensions;
 using System.Collections.Generic;

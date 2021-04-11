@@ -1,10 +1,10 @@
 ﻿using AMMCrawler.Abstractions;
 using OpenQA.Selenium;
 using System.Threading.Tasks;
-using AMMCrawler.Extensions;
 using AMMCrawler.ServiceLayer.Abstractions;
 using AMMCrawler.ServiceLayer.DTO;
 using AMMCrawler.Core.Abstractions;
+using AMMCrawler.Core.Helpers;
 
 namespace AMMCrawler
 {
@@ -26,12 +26,12 @@ namespace AMMCrawler
         public async Task Crawl(ResourceLinkDto dto)
         {
             _driver.Navigate().GoToUrl(dto.URL);
-            await Task.Delay(JSWait);
+            await _linksService.SaveCrawledLinkIfMissing(dto);
 
             string startMessage = string.Format("Crawl for {0} is started", dto.URL);
             _logger.LogInfo(startMessage);
 
-            string clearUrl = _driver.GetJSResult<string>("return location.origin;");
+            string clearUrl = ETCLinksAnalyzer.Instance.GetOrigin(dto.URL);
 
             Task<int> innerLinksTask = _crawlFactory.InnerLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
             Task<int> etcLinksTask = _crawlFactory.ETCLinksCrawler.PerformCrawl(_driver, dto, clearUrl);

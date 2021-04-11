@@ -1,6 +1,5 @@
 ﻿using AMMCrawler.Core.Extensions;
 using AMMCrawler.Core.Helpers;
-using AMMCrawler.DTO;
 using AMMCrawler.Providers;
 using AMMCrawler.ServiceLayer.Abstractions;
 using AMMCrawler.ServiceLayer.DTO;

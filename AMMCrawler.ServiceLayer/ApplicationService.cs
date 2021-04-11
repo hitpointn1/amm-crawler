@@ -22,7 +22,7 @@ namespace AMMCrawler.ServiceLayer
         {
             var applicationRunDto = new ApplicationRunDto();
             Application application = await _context.Applications.FirstOrDefaultAsync(a => a.Name == applicationName);
-            if (application == null)
+            if (application is null)
             {
                 application = new Application()
                 {

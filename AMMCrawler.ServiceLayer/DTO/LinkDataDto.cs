@@ -1,4 +1,4 @@
-﻿namespace AMMCrawler.DTO
+﻿namespace AMMCrawler.ServiceLayer.DTO
 {
     public class LinkDataDto
     {
