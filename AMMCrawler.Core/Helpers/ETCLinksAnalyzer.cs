@@ -6,8 +6,8 @@ namespace AMMCrawler.Core.Helpers
 {
     public class ETCLinksAnalyzer
     {
-        private const string HTTP_PROTOCOL = "http://";
-        private const string HTTPS_PROTOCOL = "https://";
+        public const string HTTP_PROTOCOL = "http://";
+        public const string HTTPS_PROTOCOL = "https://";
         private static string[] PictureIdentifier =
         {
             ".png",

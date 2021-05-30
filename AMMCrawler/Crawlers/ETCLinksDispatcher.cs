@@ -13,7 +13,7 @@ namespace AMMCrawler.Crawlers
         public ETCLinksDispatcher(ILinksService linksService, ETCLinksProvider provider)
             : base(linksService, provider) { }
 
-        protected override string GetQuery(string clearUrl)
+        protected override string GetQuery(string httpUrl, string httpsUrl)
         {
             return new LinkSelectorBuilder()
                 .IsEtc()

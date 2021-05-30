@@ -5,6 +5,8 @@ using AMMCrawler.ServiceLayer.Abstractions;
 using AMMCrawler.ServiceLayer.DTO;
 using AMMCrawler.Core.Abstractions;
 using AMMCrawler.Core.Helpers;
+using System;
+using AMMCrawler.Extensions;
 
 namespace AMMCrawler
 {
@@ -26,13 +28,21 @@ namespace AMMCrawler
         public async Task Crawl(ResourceLinkDto dto)
         {
             _driver.Navigate().GoToUrl(dto.URL);
-            Task saveTask = _linksService.SaveCrawledLinkIfMissing(dto);
             string startMessage = string.Format("Crawl for {0} is started", dto.URL);
             _logger.LogInfo(startMessage);
 
+            string driverOrigin = _driver.GetJSResult<string>("return location.origin;");
             string clearUrl = ETCLinksAnalyzer.Instance.GetOrigin(dto.URL);
+            await _linksService.SaveCrawledLinkIfMissing(dto);
 
-            await saveTask;
+            if (driverOrigin != clearUrl)
+            {
+                string message = string.Format("Redirected from {0} to {1}", clearUrl, driverOrigin);
+                _logger.LogError(message);
+                await _linksService.SetResourceLinkAsCrawled(dto);
+                return;
+            }
+
             Task<int> innerLinksTask = _crawlFactory.InnerLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
             Task<int> etcLinksTask = _crawlFactory.ETCLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
             Task<int> outerLinksTask = _crawlFactory.OuterLinksCrawler.PerformCrawl(_driver, dto, clearUrl);

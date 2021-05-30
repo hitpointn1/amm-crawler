@@ -13,10 +13,12 @@ namespace AMMCrawler.Crawlers
         public InnerLinksDispatcher(ILinksService linksService, LinksProvider provider)
             : base(linksService, provider) { }
 
-        protected override string GetQuery(string clearUrl)
+        protected override string GetQuery(string httpUrl, string httpsUrl)
         {
             return new LinkSelectorBuilder()
-                .HrefStartsWith(clearUrl)
+                .HrefStartsWith(httpUrl)
+                .NotEtc()
+                .OrHrefStartsWith(httpsUrl)
                 .NotEtc()
                 .OrHrefStartsWith("/")
                 .NotEtc()

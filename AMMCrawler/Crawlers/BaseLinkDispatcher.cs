@@ -21,14 +21,17 @@ namespace AMMCrawler.Crawlers
 
         public async Task<int> PerformCrawl(IWebDriver driver, ResourceLinkDto linkDto, string clearUrl)
         {
-            string query = GetQuery(clearUrl);
+            string origin = ETCLinksAnalyzer.Instance.GetNoProtocolUrl(clearUrl);
+            string httpsUrl = ETCLinksAnalyzer.HTTPS_PROTOCOL + origin;
+            string httpUrl = ETCLinksAnalyzer.HTTP_PROTOCOL + origin;
+            string query = GetQuery(httpUrl, httpsUrl);
             Task<int> innerLinksTask = await _linksProvider
                .GetLinksFromPage(driver, query)
                .ContinueWith((r) => PerformSave(linkDto, r.GetAwaiter().GetResult()));
             return await innerLinksTask;
         }
 
-        protected abstract string GetQuery(string clearUrl);
+        protected abstract string GetQuery(string httpUrl, string httpsUrl);
         protected abstract Task<int> PerformSave(ResourceLinkDto linkDto, HashSet<LinkDataDto> links);
     }
 }
