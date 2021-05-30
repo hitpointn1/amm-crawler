@@ -159,7 +159,7 @@ namespace AMMCrawler.ServiceLayer
                 .ToArrayAsync();
 
             IEnumerable<ResourceCrawlMapping> mappingsToAdd = resourceCrawls
-                .Where(r => !resourceCrawls.Any(c => c.CrawledLinkID == r.CrawledLinkID && c.FoundLinkID == r.FoundLinkID));
+                .Where(r => !existedMappings.Any(c => c.CrawledLinkID == r.CrawledLinkID && c.FoundLinkID == r.FoundLinkID));
             await _context.AddRangeAsync(mappingsToAdd);
             await _context.SaveChangesAsync();
             return notAddedLinks;
