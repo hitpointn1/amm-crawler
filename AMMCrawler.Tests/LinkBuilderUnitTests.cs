@@ -35,14 +35,25 @@ namespace AMMCrawler.Tests
         {
             string etcLinksQueryExpected = "'a[href^=\"#\"],a[href^=\"mailto:\"]" +
                 ",a[href$=\".doc\"]" +
+                ",a[href$=\".flv\"]" +
+                ",a[href$=\".txt\"]" +
+                ",a[href$=\".tex\"]" +
                 ",a[href$=\".docx\"]" +
+                ",a[href$=\".tif\"]" +
+                ",a[href$=\".zip\"]" +
                 ",a[href$=\".png\"]" +
                 ",a[href$=\".jpg\"]" +
                 ",a[href$=\".xls\"]" +
                 ",a[href$=\".xlsx\"]" +
                 ",a[href$=\".pdf\"]" +
-                ",a[href$=\".php\"]" +
                 ",a[href*=\".php?\"]" +
+                ",a[href$=\".php\"]" +
+                ",a[href*=\".asp?\"]" +
+                ",a[href$=\".asp\"]" +
+                ",a[href*=\".aspx?\"]" +
+                ",a[href$=\".aspx\"]" +
+                ",a[href*=\".jsp?\"]" +
+                ",a[href$=\".jsp\"]" +
                 ",a[href^=\"/\"][onclick^=\"return false\"]'";
 
             string etcLinksQuery = _testBuilder
@@ -75,25 +86,47 @@ namespace AMMCrawler.Tests
                 ":not([href$=\".doc\"])" +
                 ":not([href$=\".docx\"])" +
                 ":not([href$=\".png\"])" +
+                ":not([href$=\".flv\"])" +
+                ":not([href$=\".txt\"])" +
+                ":not([href$=\".tex\"])" +
+                ":not([href$=\".zip\"])" +
                 ":not([href$=\".jpg\"])" +
+                ":not([href$=\".tif\"])" +
                 ":not([href$=\".xls\"])" +
                 ":not([href$=\".xlsx\"])" +
                 ":not([href$=\".pdf\"])" +
                 ":not([href^=\"mailto:\"])" +
                 ":not([href*=\".php?\"])" +
                 ":not([href$=\".php\"])" +
+                ":not([href*=\".asp?\"])" +
+                ":not([href$=\".asp\"])" +
+                ":not([href*=\".aspx?\"])" +
+                ":not([href$=\".aspx\"])" +
+                ":not([href*=\".jsp?\"])" +
+                ":not([href$=\".jsp\"])" +
                 ":not([onclick^=\"return false\"])" +
                 ",a[href^=\"/\"]" +
                 ":not([href$=\".doc\"])" +
                 ":not([href$=\".docx\"])" +
                 ":not([href$=\".png\"])" +
+                ":not([href$=\".flv\"])" +
+                ":not([href$=\".txt\"])" +
+                ":not([href$=\".tex\"])" +
+                ":not([href$=\".zip\"])" +
                 ":not([href$=\".jpg\"])" +
+                ":not([href$=\".tif\"])" +
                 ":not([href$=\".xls\"])" +
                 ":not([href$=\".xlsx\"])" +
                 ":not([href$=\".pdf\"])" +
                 ":not([href^=\"mailto:\"])" +
                 ":not([href*=\".php?\"])" +
                 ":not([href$=\".php\"])" +
+                ":not([href*=\".asp?\"])" +
+                ":not([href$=\".asp\"])" +
+                ":not([href*=\".aspx?\"])" +
+                ":not([href$=\".aspx\"])" +
+                ":not([href*=\".jsp?\"])" +
+                ":not([href$=\".jsp\"])" +
                 ":not([onclick^=\"return false\"])'";
 
             string innerLinksQuery = _testBuilder

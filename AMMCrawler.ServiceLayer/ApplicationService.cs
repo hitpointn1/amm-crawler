@@ -62,5 +62,10 @@ namespace AMMCrawler.ServiceLayer
 
             await _context.SaveChangesAsync();
         }
+
+        public Task<string[]> GetAll()
+        {
+            return _context.Applications.Select(a => a.Name).ToArrayAsync();
+        }
     }
 }

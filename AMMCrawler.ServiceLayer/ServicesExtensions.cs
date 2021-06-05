@@ -12,5 +12,12 @@ namespace AMMCrawler.Configuration
                 .AddTransient<IApplicationService, ApplicationService>()
                 .AddTransient<ILinksService, LinksService>();
         }
+
+        public static IServiceCollection ConfigureServicesWeb(this IServiceCollection services)
+        {
+            return services.ConfigureDataSource()
+                .AddScoped<IApplicationService, ApplicationService>()
+                .AddScoped<IGraphService, GraphService>();
+        }
     }
 }

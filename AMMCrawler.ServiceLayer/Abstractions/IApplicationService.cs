@@ -7,5 +7,6 @@ namespace AMMCrawler.ServiceLayer.Abstractions
     {
         Task<ApplicationRunDto> StartCrawl(string applicationName, string applicationUrl);
         Task EndCrawl(int crawlRunID);
+        Task<string[]> GetAll();
     }
 }
