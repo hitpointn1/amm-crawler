@@ -27,29 +27,28 @@ namespace AMMCrawler.DAL.Migrations
                 {
                     CrawledLinkID = table.Column<int>(type: "INTEGER", nullable: false),
                     FoundLinkID = table.Column<int>(type: "INTEGER", nullable: false),
-                    FoundLinkID1 = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ResourceMappings", x => new { x.FoundLinkID, x.CrawledLinkID });
+                    table.ForeignKey(
+                        name: "FK_ResourceMappings_ResourceLinks_CrawledLinkID",
+                        column: x => x.CrawledLinkID,
+                        principalTable: "ResourceLinks",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ResourceMappings_ResourceLinks_FoundLinkID",
                         column: x => x.FoundLinkID,
                         principalTable: "ResourceLinks",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ResourceMappings_ResourceLinks_FoundLinkID1",
-                        column: x => x.FoundLinkID1,
-                        principalTable: "ResourceLinks",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ResourceMappings_FoundLinkID1",
+                name: "IX_ResourceMappings_CrawledLinkID",
                 table: "ResourceMappings",
-                column: "FoundLinkID1");
+                column: "CrawledLinkID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

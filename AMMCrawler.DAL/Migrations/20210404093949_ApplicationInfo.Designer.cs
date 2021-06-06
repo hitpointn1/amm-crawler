@@ -96,12 +96,9 @@ namespace AMMCrawler.DAL.Migrations
                     b.Property<int>("CrawledLinkID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("FoundLinkID1")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("FoundLinkID", "CrawledLinkID");
 
-                    b.HasIndex("FoundLinkID1");
+                    b.HasIndex("CrawledLinkID");
 
                     b.ToTable("ResourceMappings");
                 });
@@ -157,13 +154,13 @@ namespace AMMCrawler.DAL.Migrations
                 {
                     b.HasOne("AMMCrawler.DAL.Entities.ResourceLink", "CrawledLink")
                         .WithMany("Crawls")
-                        .HasForeignKey("FoundLinkID")
+                        .HasForeignKey("CrawledLinkID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("AMMCrawler.DAL.Entities.ResourceLink", "FoundLink")
                         .WithMany()
-                        .HasForeignKey("FoundLinkID1");
+                        .HasForeignKey("FoundLinkID");
 
                     b.Navigation("CrawledLink");
 

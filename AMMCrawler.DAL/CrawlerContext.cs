@@ -39,7 +39,7 @@ namespace AMMCrawler.DAL
             modelBuilder.Entity<ResourceCrawlMapping>()
                 .HasOne(x => x.CrawledLink)
                 .WithMany(x => x.Crawls)
-                .HasForeignKey(x => x.FoundLinkID)
+                .HasForeignKey(x => x.CrawledLinkID)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
