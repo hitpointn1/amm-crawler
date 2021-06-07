@@ -42,20 +42,12 @@ namespace AMMCrawler
                 return;
             }
 
-            Task<int> innerLinksTask = _crawlFactory.InnerLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
-            Task<int> etcLinksTask = _crawlFactory.ETCLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
-            Task<int> outerLinksTask = _crawlFactory.OuterLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
-
-            await Task.WhenAll(etcLinksTask, outerLinksTask, innerLinksTask);
-
-            int savedInnerLinksCount = innerLinksTask.GetAwaiter().GetResult();
-            int savedEtcLinksCount = etcLinksTask.GetAwaiter().GetResult();
-            int savedOuterLinksCount = outerLinksTask.GetAwaiter().GetResult();
+            int savedInnerLinksCount = await _crawlFactory.InnerLinksCrawler.PerformCrawl(_driver, dto, clearUrl);
 
             await _linksService.SetResourceLinkAsCrawled(dto);
 
-            string endMessage = string.Format("{0} is crawled succesfully. New inner links count - {1}, New outer links count - {2}, New etc links - {3}"
-                , dto.URL, savedInnerLinksCount, savedOuterLinksCount, savedEtcLinksCount);
+            string endMessage = string.Format("{0} is crawled succesfully. New inner links count - {1}",
+                dto.URL, savedInnerLinksCount);
             _logger.LogInfo(endMessage);
         }
 

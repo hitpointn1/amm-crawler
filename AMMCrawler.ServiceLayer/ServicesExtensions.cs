@@ -10,7 +10,8 @@ namespace AMMCrawler.Configuration
         {
             return services.ConfigureDataSource()
                 .AddTransient<IApplicationService, ApplicationService>()
-                .AddTransient<ILinksService, LinksService>();
+                .AddTransient<ILinksService, LinksService>()
+                .AddTransient<IGraphService, GraphService>();
         }
 
         public static IServiceCollection ConfigureServicesWeb(this IServiceCollection services)

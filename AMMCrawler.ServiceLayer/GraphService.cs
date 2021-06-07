@@ -31,7 +31,7 @@ namespace AMMCrawler.ServiceLayer
                 {
                     Caption = r.URL,
                     Id = r.ID,
-                    Group = r.Crawls.Count
+                    Group = _context.ResourceMappings.Where(m => m.CrawledLinkID == r.ID).Count() 
                 })
                 .ToArrayAsync();
 
@@ -75,6 +75,23 @@ namespace AMMCrawler.ServiceLayer
             graphDataDto.Edges = await edgesTask;
 
             return graphDataDto;
+        }
+
+        public Task<EdgesCompleteDataDto[]> GetEdgesData(string applicationName)
+        {
+            return _context.ResourceMappings
+                .AsNoTracking()
+                .Include(r => r.CrawledLink)
+                .Include(r => r.FoundLink)
+                .Where(m => m.CrawledLink.Application.Name == applicationName)
+                .Select(m => new EdgesCompleteDataDto()
+                {
+                    Source = m.CrawledLinkID,
+                    Target = m.FoundLinkID,
+                    Label = m.CrawledLink.URL,
+                    TargetLabel = m.FoundLink.URL,
+                })
+                .ToArrayAsync();
         }
     }
 }

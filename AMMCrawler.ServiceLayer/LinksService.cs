@@ -140,6 +140,7 @@ namespace AMMCrawler.ServiceLayer
                 .ToArray();
             await _context.AddRangeAsync(notAddedLinks);
             await _context.SaveChangesAsync();
+
             if (type != LinkType.Inner)
                 return notAddedLinks;
             IEnumerable<ResourceCrawlMapping> resourceCrawls = existedLinks
@@ -150,12 +151,8 @@ namespace AMMCrawler.ServiceLayer
                     FoundLinkID = l.ID
                 });
 
-            IEnumerable<int> crawledLinkIds = resourceCrawls.Select(r => r.CrawledLinkID).Distinct();
-            IEnumerable<int> foundLinkIds = resourceCrawls.Select(r => r.FoundLinkID);
-
             ResourceCrawlMapping[] existedMappings = await _context.ResourceMappings
-                .Where(r => crawledLinkIds.Contains(r.CrawledLinkID))
-                .Where(r => foundLinkIds.Contains(r.FoundLinkID))
+                .Where(r => r.CrawledLinkID == crawledLink.ID)
                 .ToArrayAsync();
 
             IEnumerable<ResourceCrawlMapping> mappingsToAdd = resourceCrawls
