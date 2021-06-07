@@ -12,6 +12,7 @@ namespace AMMCrawler.Crawlers
     {
         protected readonly ILinksService _linksService;
         private ILinksProvider _linksProvider;
+        protected string _origin;
 
         protected BaseLinkDispatcher(ILinksService linksService, ILinksProvider provider)
         {
@@ -21,9 +22,9 @@ namespace AMMCrawler.Crawlers
 
         public async Task<int> PerformCrawl(IWebDriver driver, ResourceLinkDto linkDto, string clearUrl)
         {
-            string origin = ETCLinksAnalyzer.Instance.GetNoProtocolUrl(clearUrl);
-            string httpsUrl = ETCLinksAnalyzer.HTTPS_PROTOCOL + origin;
-            string httpUrl = ETCLinksAnalyzer.HTTP_PROTOCOL + origin;
+            _origin = ETCLinksAnalyzer.Instance.GetNoProtocolUrl(clearUrl);
+            string httpsUrl = ETCLinksAnalyzer.HTTPS_PROTOCOL + _origin;
+            string httpUrl = ETCLinksAnalyzer.HTTP_PROTOCOL + _origin;
             string query = GetQuery(httpUrl, httpsUrl);
             Task<int> innerLinksTask = await _linksProvider
                .GetLinksFromPage(driver, query)

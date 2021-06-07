@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace AMMCrawler.Providers
 {
@@ -37,14 +38,15 @@ namespace AMMCrawler.Providers
             try
             {
                 string href = element.GetAttribute("href");
+                string decodedUrl = HttpUtility.UrlDecode(href);
                 string onclick = element.GetAttribute("onclick");
 
-                if (!IsLinkValid(href))
+                if (!IsLinkValid(decodedUrl))
                     return null;
 
                 return new LinkDataDto()
                 {
-                    Href = ParseLink(href),
+                    Href = ParseLink(decodedUrl),
                     OnClick = onclick
                 };
             }

@@ -7,6 +7,7 @@ using AMMCrawler.Core.Abstractions;
 using AMMCrawler.Core.Helpers;
 using System;
 using AMMCrawler.Extensions;
+using System.Collections.Generic;
 
 namespace AMMCrawler
 {
@@ -37,9 +38,7 @@ namespace AMMCrawler
 
             if (driverOrigin != clearUrl)
             {
-                string message = string.Format("Redirected from {0} to {1}", clearUrl, driverOrigin);
-                _logger.LogError(message);
-                await _linksService.SetResourceLinkAsCrawled(dto);
+                await HandleRedirect(dto, clearUrl, driverOrigin);
                 return;
             }
 
@@ -69,6 +68,23 @@ namespace AMMCrawler
         {
             _driver.Close();
             _driver.Dispose();
+        }
+
+        private async Task HandleRedirect(ResourceLinkDto dto, string clearUrl, string driverOrigin)
+        {
+            string message = string.Format("Redirected from {0} to {1}", clearUrl, driverOrigin);
+            _logger.LogError(message);
+            string noProtoDriver = ETCLinksAnalyzer.Instance.GetNoProtocolUrl(driverOrigin);
+            string noProtoUrl = ETCLinksAnalyzer.Instance.GetNoProtocolUrl(clearUrl);
+            if (noProtoDriver == noProtoUrl)
+            {
+                var newLink = new LinkDataDto()
+                {
+                    Href = _driver.Url
+                };
+                await _linksService.SaveInnerLinks(dto, new HashSet<LinkDataDto>(new LinkDataDto[] { newLink }));
+            }
+            await _linksService.SetResourceLinkAsCrawled(dto);
         }
     }
 }

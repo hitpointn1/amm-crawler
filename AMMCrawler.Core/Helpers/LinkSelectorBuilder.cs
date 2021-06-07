@@ -61,6 +61,11 @@ namespace AMMCrawler.Core.Helpers
             return AddHrefAttribute(SelectorType.StartsWith, selector);
         }
 
+        public LinkSelectorBuilder Href()
+        {
+            return AddHrefAttribute(SelectorType.Default, null);
+        }
+
         private LinkSelectorBuilder AddHrefAttribute(SelectorType type, string selector)
         {
             return AddAttribute(HREF_ATTR, type, selector);
@@ -83,7 +88,8 @@ namespace AMMCrawler.Core.Helpers
 
         private LinkSelectorBuilder AddAttribute(string attr, SelectorType type, string selector)
         {
-            _builder.AppendFormat("[{0}{1}=\"{2}\"]", attr, type.GetSelectorType(), selector);
+            string selectorOrEmpty = string.IsNullOrEmpty(selector) ? "" : string.Format("{0}=\"{1}\"", type.GetSelectorType(), selector);
+            _builder.AppendFormat("[{0}{1}]", attr, selectorOrEmpty);
             return this;
         }
 

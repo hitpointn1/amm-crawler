@@ -7,6 +7,10 @@ namespace AMMCrawler.Core.Extensions
         public static LinkSelectorBuilder NotEtc(this LinkSelectorBuilder builder)
         {
             return builder
+                .NotHrefEndsWith(".rar")
+                .NotHrefEndsWith(".fb2")
+                .NotHrefEndsWith(".djvu")
+                .NotHrefEndsWith(".ppt")
                 .NotHrefEndsWith(".doc")
                 .NotHrefEndsWith(".docx")
                 .NotHrefEndsWith(".png")

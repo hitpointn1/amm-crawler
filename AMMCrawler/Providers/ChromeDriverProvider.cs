@@ -9,6 +9,7 @@ namespace AMMCrawler.Providers
         {
             var options = new ChromeOptions();
             options.AddArgument("--headless");
+            options.AddArgument("--no-sandbox");
             return new ChromeDriver(options);
         }
     }

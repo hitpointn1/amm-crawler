@@ -16,17 +16,14 @@ namespace AMMCrawler.Crawlers
         protected override string GetQuery(string httpUrl, string httpsUrl)
         {
             return new LinkSelectorBuilder()
-                .HrefStartsWith(httpUrl)
-                .NotEtc()
-                .OrHrefStartsWith(httpsUrl)
-                .NotEtc()
-                .OrHrefStartsWith("/")
+                .Href()
                 .NotEtc()
                 .Build();
         }
 
         protected override Task<int> PerformSave(ResourceLinkDto linkDto, HashSet<LinkDataDto> links)
         {
+            links.RemoveWhere(l => !l.Href.Contains("://" + _origin));
             return _linksService.SaveInnerLinks(linkDto, links);
         }
     }
