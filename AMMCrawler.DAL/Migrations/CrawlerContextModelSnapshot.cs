@@ -88,15 +88,26 @@ namespace AMMCrawler.DAL.Migrations
 
             modelBuilder.Entity("AMMCrawler.DAL.Entities.ResourceCrawlMapping", b =>
                 {
-                    b.Property<int>("FoundLinkID")
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CrawledLinkID")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("FoundLinkID", "CrawledLinkID");
+                    b.Property<int>("FoundLinkID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ResourceLinkID")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ID");
 
                     b.HasIndex("CrawledLinkID");
+
+                    b.HasIndex("FoundLinkID");
+
+                    b.HasIndex("ResourceLinkID");
 
                     b.ToTable("ResourceMappings");
                 });
@@ -151,14 +162,20 @@ namespace AMMCrawler.DAL.Migrations
             modelBuilder.Entity("AMMCrawler.DAL.Entities.ResourceCrawlMapping", b =>
                 {
                     b.HasOne("AMMCrawler.DAL.Entities.ResourceLink", "CrawledLink")
-                        .WithMany("Crawls")
+                        .WithMany()
                         .HasForeignKey("CrawledLinkID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("AMMCrawler.DAL.Entities.ResourceLink", "FoundLink")
                         .WithMany()
-                        .HasForeignKey("FoundLinkID");
+                        .HasForeignKey("FoundLinkID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AMMCrawler.DAL.Entities.ResourceLink", null)
+                        .WithMany("Crawls")
+                        .HasForeignKey("ResourceLinkID");
 
                     b.Navigation("CrawledLink");
 

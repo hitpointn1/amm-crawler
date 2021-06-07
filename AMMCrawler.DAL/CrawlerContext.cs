@@ -29,17 +29,16 @@ namespace AMMCrawler.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ResourceCrawlMapping>()
-                .HasKey(x => new { x.FoundLinkID, x.CrawledLinkID });
+                .HasKey(x => x.ID);
 
             modelBuilder.Entity<ResourceCrawlMapping>()
                 .HasOne(x => x.FoundLink)
-                .WithOne()
+                .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ResourceCrawlMapping>()
                 .HasOne(x => x.CrawledLink)
-                .WithMany(x => x.Crawls)
-                .HasForeignKey(x => x.CrawledLinkID)
+                .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
